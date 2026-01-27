@@ -18,13 +18,56 @@ export const BookingSection = () => {
     email: '',
     phone: '',
     serviceType: '',
-    moveSize: '',
-    currentAddress: '',
-    newAddress: '',
+    movingSupport: '',
+    // Moving From Address fields
+    fromAddress: '',
+    fromMoveSize: '',
+    fromFloor: '',
+    fromElevator: '',
+    // Moving To Address fields
+    toAddress: '',
+    toMoveSize: '',
+    toFloor: '',
+    toElevator: '',
     preferredTime: '',
     hoursNeeded: '',
     specialRequests: ''
   });
+
+  const moveSizeOptions = [
+    { value: "small-office", label: "Small Office" },
+    { value: "large-office", label: "Large Office" },
+    { value: "1-bedroom-house", label: "1 Bedroom House" },
+    { value: "2-bedroom-house", label: "2 Bedroom House" },
+    { value: "3-bedroom-house", label: "3 Bedroom House" },
+    { value: "4-bedroom-house", label: "4 Bedroom House" },
+    { value: "5-plus-bedroom-house", label: "5+ Bedroom House" },
+    { value: "1-bedroom-apt", label: "1 Bedroom Apt/Condo" },
+    { value: "2-bedroom-apt", label: "2 Bedroom Apt/Condo" },
+    { value: "3-bedroom-apt", label: "3 Bedroom Apt/Condo" },
+    { value: "4-bedroom-apt", label: "4 Bedroom Apt/Condo" },
+    { value: "5-plus-bedroom-apt", label: "5+ Bedroom Apt/Condo" },
+    { value: "storage", label: "Storage" },
+    { value: "other", label: "Other" }
+  ];
+
+  const floorOptions = [
+    { value: "ground", label: "Ground floor / Flat" },
+    { value: "2nd", label: "2nd floor / 2 Storey" },
+    { value: "3rd", label: "3rd floor / 3 Storey" },
+    { value: "4th", label: "4th floor" },
+    { value: "5th-plus", label: "5th+ Floor" }
+  ];
+
+  const movingSupportOptions = [
+    { value: "full-packing", label: "Full Packing Service" },
+    { value: "partial-packing", label: "Partial Packing Service" },
+    { value: "packing-supplies", label: "Packing Supplies Sale" },
+    { value: "loading-unloading", label: "Loading & Unloading Assistance" },
+    { value: "furniture-protection", label: "Furniture Protection" },
+    { value: "transportation", label: "Transportation Only" },
+    { value: "none", label: "No Support Needed" }
+  ];
 
   const handleInputChange = (field, value) => {
     setFormData(prev => ({
@@ -43,8 +86,17 @@ export const BookingSection = () => {
     
     try {
       const bookingData = {
-        ...formData,
-        preferredDate: selectedDate.toISOString()
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        serviceType: formData.serviceType,
+        moveSize: formData.fromMoveSize,
+        currentAddress: `${formData.fromAddress} | Size: ${formData.fromMoveSize} | Floor: ${formData.fromFloor} | Elevator: ${formData.fromElevator}`,
+        newAddress: `${formData.toAddress} | Size: ${formData.toMoveSize} | Floor: ${formData.toFloor} | Elevator: ${formData.toElevator}`,
+        preferredDate: selectedDate.toISOString(),
+        preferredTime: formData.preferredTime,
+        hoursNeeded: formData.hoursNeeded,
+        specialRequests: `Moving Support: ${formData.movingSupport || 'None'} | ${formData.specialRequests}`
       };
       
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/bookings/`, {
@@ -64,9 +116,15 @@ export const BookingSection = () => {
           email: '',
           phone: '',
           serviceType: '',
-          moveSize: '',
-          currentAddress: '',
-          newAddress: '',
+          movingSupport: '',
+          fromAddress: '',
+          fromMoveSize: '',
+          fromFloor: '',
+          fromElevator: '',
+          toAddress: '',
+          toMoveSize: '',
+          toFloor: '',
+          toElevator: '',
           preferredTime: '',
           hoursNeeded: '',
           specialRequests: ''
@@ -127,7 +185,7 @@ export const BookingSection = () => {
                       type="tel"
                       value={formData.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="(501) 575-5189"
+                      placeholder="(812) 669-4165"
                       required
                       className="mt-2"
                     />
@@ -147,62 +205,166 @@ export const BookingSection = () => {
                   />
                 </div>
 
-                {/* Service Details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Service Type */}
+                <div>
+                  <Label>Service Type *</Label>
+                  <Select onValueChange={(value) => handleInputChange('serviceType', value)}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select service" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="local-moving">Local Moving</SelectItem>
+                      <SelectItem value="long-distance-moving">Long Distance Moving</SelectItem>
+                      <SelectItem value="last-minute-moving">Last Minute Moving</SelectItem>
+                      <SelectItem value="residential-moving">Residential Moving</SelectItem>
+                      <SelectItem value="commercial-moving">Commercial Moving</SelectItem>
+                      <SelectItem value="house-cleaning">House Cleaning</SelectItem>
+                      <SelectItem value="office-cleaning">Office Cleaning</SelectItem>
+                      <SelectItem value="full-service">Moving + Cleaning</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Moving Support */}
+                <div>
+                  <Label>Moving Support</Label>
+                  <Select onValueChange={(value) => handleInputChange('movingSupport', value)}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select moving support (optional)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {movingSupportOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Moving From Address Section */}
+                <div className="bg-blue-50 p-4 rounded-lg space-y-4">
+                  <h4 className="font-semibold text-gray-900 flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-blue-600" />
+                    Moving From Address
+                  </h4>
                   <div>
-                    <Label>Service Type *</Label>
-                    <Select onValueChange={(value) => handleInputChange('serviceType', value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select service" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="residential-moving">Residential Moving</SelectItem>
-                        <SelectItem value="commercial-moving">Commercial Moving</SelectItem>
-                        <SelectItem value="house-cleaning">House Cleaning</SelectItem>
-                        <SelectItem value="office-cleaning">Office Cleaning</SelectItem>
-                        <SelectItem value="full-service">Moving + Cleaning</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <Label htmlFor="fromAddress">Address *</Label>
+                    <Input
+                      id="fromAddress"
+                      value={formData.fromAddress}
+                      onChange={(e) => handleInputChange('fromAddress', e.target.value)}
+                      placeholder="123 Current St, City, State 12345"
+                      required
+                      className="mt-2"
+                    />
                   </div>
-                  <div>
-                    <Label>Move Size</Label>
-                    <Select onValueChange={(value) => handleInputChange('moveSize', value)}>
-                      <SelectTrigger className="mt-2">
-                        <SelectValue placeholder="Select size" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="studio">Studio/1BR</SelectItem>
-                        <SelectItem value="2br">2-3 Bedrooms</SelectItem>
-                        <SelectItem value="4br">4+ Bedrooms</SelectItem>
-                        <SelectItem value="office-small">Small Office</SelectItem>
-                        <SelectItem value="office-large">Large Office</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Move Size</Label>
+                      <Select onValueChange={(value) => handleInputChange('fromMoveSize', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {moveSizeOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Floor</Label>
+                      <Select onValueChange={(value) => handleInputChange('fromFloor', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select floor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {floorOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Elevator?</Label>
+                      <Select onValueChange={(value) => handleInputChange('fromElevator', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
-                {/* Addresses */}
-                <div>
-                  <Label htmlFor="currentAddress">Current Address *</Label>
-                  <Input
-                    id="currentAddress"
-                    value={formData.currentAddress}
-                    onChange={(e) => handleInputChange('currentAddress', e.target.value)}
-                    placeholder="123 Current St, City, State 12345"
-                    required
-                    className="mt-2"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="newAddress">New Address</Label>
-                  <Input
-                    id="newAddress"
-                    value={formData.newAddress}
-                    onChange={(e) => handleInputChange('newAddress', e.target.value)}
-                    placeholder="456 New St, City, State 12345"
-                    className="mt-2"
-                  />
+                {/* Moving To Address Section */}
+                <div className="bg-green-50 p-4 rounded-lg space-y-4">
+                  <h4 className="font-semibold text-gray-900 flex items-center">
+                    <MapPin className="h-4 w-4 mr-2 text-green-600" />
+                    Moving To Address
+                  </h4>
+                  <div>
+                    <Label htmlFor="toAddress">Address</Label>
+                    <Input
+                      id="toAddress"
+                      value={formData.toAddress}
+                      onChange={(e) => handleInputChange('toAddress', e.target.value)}
+                      placeholder="456 New St, City, State 12345"
+                      className="mt-2"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Move Size</Label>
+                      <Select onValueChange={(value) => handleInputChange('toMoveSize', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {moveSizeOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Floor</Label>
+                      <Select onValueChange={(value) => handleInputChange('toFloor', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select floor" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {floorOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <Label>Elevator?</Label>
+                      <Select onValueChange={(value) => handleInputChange('toElevator', value)}>
+                        <SelectTrigger className="mt-2">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="yes">Yes</SelectItem>
+                          <SelectItem value="no">No</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Hours Needed */}
@@ -334,9 +496,12 @@ export const BookingSection = () => {
                   Have questions or need immediate assistance? Our team is here to help.
                 </p>
                 <div className="space-y-4">
-                  <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button 
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => window.location.href = 'tel:8126694165'}
+                  >
                     <Clock className="h-4 w-4 mr-2" />
-                    Call (501) 575-5189
+                    Call (812) 669-4165
                   </Button>
                   <div className="text-sm text-gray-600">
                     Available: Monday - Saturday, 8AM - 6PM
@@ -352,14 +517,40 @@ export const BookingSection = () => {
                   <MapPin className="h-5 w-5 text-blue-600" />
                   <h3 className="text-xl font-semibold text-gray-900">Service Areas</h3>
                 </div>
-                <div className="grid grid-cols-1 gap-2 text-sm text-gray-600">
-                  <div>• Ohio (Cincinnati, Columbus, Cleveland, Dayton)</div>
-                  <div>• Kentucky (Louisville, Lexington, Covington)</div>
-                  <div>• Indiana (Indianapolis, Fort Wayne, Evansville)</div>
+                <div className="text-gray-600">
+                  <p className="font-semibold text-navy-blue mb-2">Indiana</p>
+                  <p className="text-sm">Bloomington, Indianapolis, Columbus, Lafayette, Carmel, Greenwood, Avon, Seymour, Greensburg, Fishers, Zionsville, Muncie, Danville, etc.</p>
                 </div>
                 <p className="text-xs text-gray-500 mt-4">
-                  Serving the entire tri-state region with professional service!
+                  Proudly serving Indiana with professional moving and cleaning services!
                 </p>
+              </CardContent>
+            </Card>
+
+            {/* Moving Services Highlight */}
+            <Card className="shadow-lg border-0 bg-gradient-to-br from-sky-50 to-green-50">
+              <CardContent className="p-8">
+                <div className="flex items-center space-x-2 mb-4">
+                  <Truck className="h-5 w-5 text-sky-blue" />
+                  <h3 className="text-xl font-semibold text-gray-900">Our Moving Services</h3>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-sky-blue rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Local Moving</span>
+                    <span className="text-gray-500 text-sm">- Within Indiana</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Long Distance Moving</span>
+                    <span className="text-gray-500 text-sm">- Across states</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <span className="text-gray-700 font-medium">Last Minute Moving</span>
+                    <span className="text-gray-500 text-sm">- Same day service</span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           </div>
