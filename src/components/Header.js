@@ -1,24 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Menu, X, Phone, Mail } from 'lucide-react';
+import { Menu, X, Phone, ChevronDown, Home, Building, Package, Sparkles } from 'lucide-react';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const servicesRef = useRef(null);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  const serviceLinks = [
+    { name: "Residential Moving", path: "/services/residential-moving", icon: Home },
+    { name: "Commercial Moving", path: "/services/commercial-moving", icon: Building },
+    { name: "Moving Support", path: "/services/moving-support", icon: Package },
+    { name: "House Cleaning", path: "/services/residential-cleaning", icon: Sparkles },
+    { name: "Office Cleaning", path: "/services/commercial-cleaning", icon: Building },
+  ];
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (servicesRef.current && !servicesRef.current.contains(event.target)) {
+        setIsServicesOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Close dropdown on route change
+  useEffect(() => {
+    setIsServicesOpen(false);
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const toggleServicesDropdown = (e) => {
+    e.preventDefault();
+    setIsServicesOpen(!isServicesOpen);
+  };
+
   const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (isHomePage) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      window.location.href = `/#${sectionId}`;
     }
-    setIsMenuOpen(false); // Close menu after navigation
+    setIsMenuOpen(false);
   };
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isHomePage) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.location.href = '/';
+    }
   };
 
   return (
@@ -34,27 +80,63 @@ export const Header = () => {
                 className="rounded-lg shadow-sm"
                 style={{height: '50px', width: '150px', objectFit: 'cover'}}
               />
-              <div className="text-lg font-black text-navy-blue cursor-pointer tracking-wide">
-               
-              </div>
             </button>
           </div>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
-            <a href="#home" className="text-gray-700 hover:text-sky-blue transition-colors">Home</a>
-            <a href="#services" className="text-gray-700 hover:text-sky-blue transition-colors">Services</a>
-            <a href="#about" className="text-gray-700 hover:text-sky-blue transition-colors">About</a>
-            <a href="#testimonials" className="text-gray-700 hover:text-sky-blue transition-colors">Reviews</a>
-            <a href="#contact" className="text-gray-700 hover:text-sky-blue transition-colors">Contact</a>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link to="/" className="text-gray-700 hover:text-sky-blue transition-colors">Home</Link>
+            
+            {/* Services Dropdown */}
+            <div className="relative" ref={servicesRef}>
+              <button 
+                onClick={toggleServicesDropdown}
+                className="flex items-center text-gray-700 hover:text-sky-blue transition-colors"
+              >
+                Services
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
+              </button>
+              
+              {isServicesOpen && (
+                <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-lg shadow-xl border py-2 z-50">
+                  <Link
+                    to="/services"
+                    className="flex items-center px-4 py-2 text-sky-blue hover:bg-sky-50 transition-colors font-medium border-b mb-1"
+                    onClick={() => setIsServicesOpen(false)}
+                  >
+                    View All Services
+                  </Link>
+                  {serviceLinks.map((service, index) => {
+                    const IconComponent = service.icon;
+                    return (
+                      <Link
+                        key={index}
+                        to={service.path}
+                        className="flex items-center px-4 py-2 text-gray-700 hover:bg-sky-50 hover:text-sky-blue transition-colors"
+                        onClick={() => setIsServicesOpen(false)}
+                      >
+                        <IconComponent className="h-4 w-4 mr-3 text-gray-400" />
+                        {service.name}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <Link to="/pricing" className="text-gray-700 hover:text-sky-blue transition-colors">Pricing</Link>
+            <Link to="/about" className="text-gray-700 hover:text-sky-blue transition-colors">About</Link>
+            <Link to="/faq" className="text-gray-700 hover:text-sky-blue transition-colors">FAQs</Link>
+            <Link to="/reviews" className="text-gray-700 hover:text-sky-blue transition-colors">Reviews</Link>
+            <Link to="/contact" className="text-gray-700 hover:text-sky-blue transition-colors">Contact</Link>
           </nav>
 
           {/* Contact Info & CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <a href="tel:8126694165" className="flex items-center space-x-2 text-sm text-gray-600 hover:text-sky-blue transition-colors">
               <Phone className="h-4 w-4" />
-              <span>(501) 575-5189</span>
-            </div>
+              <span>(812) 669-4165</span>
+            </a>
             <Button 
               className="bg-bright-orange text-white hover:opacity-90"
               onClick={() => scrollToSection('booking')}
@@ -76,16 +158,49 @@ export const Header = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t">
             <nav className="flex flex-col space-y-4">
-              <a href="#home" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Home</a>
-              <a href="#services" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Services</a>
-              <a href="#about" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>About</a>
-              <a href="#testimonials" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Reviews</a>
-              <a href="#contact" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</a>
-              <div className="flex items-center space-x-2 text-sm text-gray-600 pt-2">
-                <Phone className="h-4 w-4" />
-                <span>(501) 575-5189</span>
+              <Link to="/" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Home</Link>
+              
+              {/* Mobile Services Submenu */}
+              <div className="space-y-2">
+                <button 
+                  onClick={() => setIsServicesOpen(!isServicesOpen)}
+                  className="flex items-center justify-between w-full text-gray-700 hover:text-sky-blue transition-colors"
+                >
+                  Services
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isServicesOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {isServicesOpen && (
+                  <div className="pl-4 space-y-2 border-l-2 border-sky-200">
+                    <Link to="/services" className="block text-gray-600 hover:text-sky-blue transition-colors text-sm font-medium" onClick={() => setIsMenuOpen(false)}>
+                      All Services
+                    </Link>
+                    {serviceLinks.map((service, index) => (
+                      <Link
+                        key={index}
+                        to={service.path}
+                        className="block text-gray-600 hover:text-sky-blue transition-colors text-sm"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {service.name}
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
-              <Button className="bg-orange-500 hover:bg-orange-600 text-white w-full">
+              
+              <Link to="/pricing" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Pricing</Link>
+              <Link to="/about" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>About</Link>
+              <Link to="/faq" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>FAQs</Link>
+              <Link to="/reviews" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Reviews</Link>
+              <Link to="/contact" className="text-gray-700 hover:text-sky-blue transition-colors" onClick={() => setIsMenuOpen(false)}>Contact</Link>
+              <a href="tel:8126694165" className="flex items-center space-x-2 text-sm text-gray-600 pt-2">
+                <Phone className="h-4 w-4" />
+                <span>(812) 669-4165</span>
+              </a>
+              <Button 
+                className="bg-orange-500 hover:bg-orange-600 text-white w-full"
+                onClick={() => scrollToSection('booking')}
+              >
                 Get Free Quote
               </Button>
             </nav>
