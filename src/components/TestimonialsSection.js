@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Avatar, AvatarFallback } from './ui/avatar';
-import { Star, Quote } from 'lucide-react';
+import { Button } from './ui/button';
+import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const fetchTestimonials = async () => {
@@ -26,6 +28,24 @@ export const TestimonialsSection = () => {
 
     fetchTestimonials();
   }, []);
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    if (testimonials.length > 0) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+      }, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [testimonials.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   if (loading) {
     return (
@@ -55,44 +75,86 @@ export const TestimonialsSection = () => {
           </p>
         </div>
 
-        {/* Testimonials Grid */}
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          {testimonials.map((testimonial) => (
-            <Card key={testimonial.id} className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg relative overflow-hidden">
-              <CardContent className="p-8">
-                {/* Quote Icon */}
-                <div className="absolute top-6 right-6 opacity-10">
-                  <Quote className="h-12 w-12 text-blue-600" />
-                </div>
-                
-                {/* Rating */}
-                <div className="flex items-center space-x-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                
-                {/* Testimonial Text */}
-                <blockquote className="text-gray-700 leading-relaxed mb-6 relative z-10">
-                  "{testimonial.text}"
-                </blockquote>
-                
-                {/* Customer Info */}
-                <div className="flex items-center space-x-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarFallback className="bg-gradient-to-br from-blue-100 to-orange-100 text-blue-600 font-semibold">
-                      {testimonial.name.split(' ').map(n => n[0]).join('')}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">{testimonial.name}</h4>
-                    <p className="text-sm text-gray-600">{testimonial.role} • {testimonial.location}</p>
+        {/* Testimonials Carousel */}
+        {testimonials.length > 0 && (
+          <div className="relative max-w-4xl mx-auto mb-16">
+            {/* Main Carousel */}
+            <div className="overflow-hidden rounded-2xl">
+              <div 
+                className="flex transition-transform duration-500 ease-in-out"
+                style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+              >
+                {testimonials.map((testimonial, index) => (
+                  <div key={index} className="w-full flex-shrink-0">
+                    <Card className="border-0 shadow-xl bg-gradient-to-br from-blue-50 to-orange-50 mx-2">
+                      <CardContent className="p-8 md:p-12 text-center">
+                        {/* Quote Icon */}
+                        <Quote className="h-12 w-12 text-sky-blue/30 mx-auto mb-6" />
+                        
+                        {/* Rating */}
+                        <div className="flex justify-center space-x-1 mb-6">
+                          {[...Array(testimonial.rating)].map((_, i) => (
+                            <Star key={i} className="h-6 w-6 text-yellow-400 fill-current" />
+                          ))}
+                        </div>
+                        
+                        {/* Testimonial Text */}
+                        <blockquote className="text-xl md:text-2xl text-gray-700 leading-relaxed mb-8 italic">
+                          "{testimonial.text}"
+                        </blockquote>
+                        
+                        {/* Customer Info */}
+                        <div className="flex items-center justify-center space-x-4">
+                          <Avatar className="h-14 w-14">
+                            <AvatarFallback className="bg-gradient-to-br from-sky-blue to-bright-orange text-white font-semibold text-lg">
+                              {testimonial.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="text-left">
+                            <h4 className="font-semibold text-gray-900 text-lg">{testimonial.name}</h4>
+                            <p className="text-gray-600">{testimonial.role} • {testimonial.location}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Arrows */}
+            <button 
+              onClick={prevSlide}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 md:-translate-x-6 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors z-10"
+              aria-label="Previous testimonial"
+            >
+              <ChevronLeft className="h-6 w-6 text-gray-600" />
+            </button>
+            <button 
+              onClick={nextSlide}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 md:translate-x-6 bg-white p-3 rounded-full shadow-lg hover:bg-gray-50 transition-colors z-10"
+              aria-label="Next testimonial"
+            >
+              <ChevronRight className="h-6 w-6 text-gray-600" />
+            </button>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center mt-8 space-x-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    currentSlide === index 
+                      ? 'bg-sky-blue w-8' 
+                      : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                  aria-label={`Go to testimonial ${index + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Trust Indicators */}
         <div className="bg-gradient-to-r from-blue-50 to-orange-50 rounded-2xl p-8 lg:p-12">
@@ -129,45 +191,18 @@ export const TestimonialsSection = () => {
           </div>
         </div>
 
-        {/* Reviews and Rating Section */}
-        <div className="mt-12 space-y-8">
-          <div className="text-center">
-            <div className="inline-flex items-center space-x-4 bg-white p-4 rounded-lg shadow-md mb-6">
-              <div className="flex items-center space-x-2">
-                <div className="text-2xl font-bold text-blue-600">G</div>
-                <div>
-                  <div className="font-semibold text-gray-900">SwiftMove & Clean</div>
-                  <div className="flex items-center space-x-1">
-                    <div className="text-sm text-gray-600">5.0</div>
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-3 w-3 text-yellow-400 fill-current" />
-                    ))}
-                    <div className="text-sm text-gray-500">(142 reviews)</div>
-                  </div>
-                </div>
-              </div>
-              <div className="border-l border-gray-200 pl-4">
-                <div className="text-sm text-gray-600">Rated #1 Moving Service</div>
-                <div className="text-xs text-gray-500">In your area</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Write a Review Section */}
+        {/* Write Review Section */}
+        <div className="mt-12">
           <div className="bg-gradient-to-r from-blue-50 to-orange-50 rounded-2xl p-8">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                📝 Write a Review & Share Your Experience
+                Write a Review & Share Your Experience
               </h3>
-              <p className="text-lg text-gray-700 mb-2">
-                <strong>We value your feedback!</strong>
-              </p>
-              <p className="text-gray-600 mb-8">
-                Help other customers by sharing your experience with our moving and cleaning services. 
-                Your honest review helps us improve and guides others in making their decision.
+              <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                Help other customers by sharing your experience with our moving and cleaning services.
               </p>
               
-              <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto mb-6">
+              <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">
                 <a 
                   href="https://www.google.com/search?q=SwiftMove+%26+Clean+reviews" 
                   target="_blank" 
@@ -175,8 +210,7 @@ export const TestimonialsSection = () => {
                   className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center group"
                 >
                   <div className="text-3xl font-bold text-blue-600 mb-3 group-hover:scale-110 transition-transform">G</div>
-                  <div className="font-semibold text-gray-900 mb-2">Write Google Review</div>
-                  <div className="text-sm text-gray-600 text-center">Share your experience on Google Business</div>
+                  <div className="font-semibold text-gray-900">Google Review</div>
                 </a>
                 
                 <a 
@@ -186,8 +220,7 @@ export const TestimonialsSection = () => {
                   className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center group"
                 >
                   <div className="text-3xl font-bold text-red-600 mb-3 group-hover:scale-110 transition-transform">Y</div>
-                  <div className="font-semibold text-gray-900 mb-2">Write Yelp Review</div>
-                  <div className="text-sm text-gray-600 text-center">Leave detailed feedback on Yelp</div>
+                  <div className="font-semibold text-gray-900">Yelp Review</div>
                 </a>
                 
                 <a 
@@ -197,26 +230,9 @@ export const TestimonialsSection = () => {
                   className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center group"
                 >
                   <div className="text-3xl font-bold text-blue-700 mb-3 group-hover:scale-110 transition-transform">f</div>
-                  <div className="font-semibold text-gray-900 mb-2">Write Facebook Review</div>
-                  <div className="text-sm text-gray-600 text-center">Rate us on our Facebook page</div>
+                  <div className="font-semibold text-gray-900">Facebook Review</div>
                 </a>
               </div>
-              
-              <div className="bg-white p-4 rounded-lg shadow-sm max-w-xl mx-auto">
-                <p className="text-sm font-semibold text-gray-900 mb-2">
-                  ⭐ How to Leave a Review:
-                </p>
-                <p className="text-sm text-gray-600">
-                  1. Click on any platform above<br/>
-                  2. Sign in to your account (Google/Yelp/Facebook)<br/>
-                  3. Rate us 1-5 stars and write your honest experience<br/>
-                  4. Submit your review to help other customers
-                </p>
-              </div>
-              
-              <p className="text-sm text-gray-500 mt-4">
-                <strong>Thank you for taking the time to review our services!</strong>
-              </p>
             </div>
           </div>
         </div>
