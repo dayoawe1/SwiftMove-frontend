@@ -141,10 +141,10 @@ export const HeroSection = () => {
                 <p className="text-sm text-gray-600 mb-3">Call us now for same-day service</p>
                 <Button 
                   className="bg-red-600 hover:bg-red-700 text-white w-full"
-                  onClick={() => window.open('tel:5015755189', '_self')}
+                  onClick={() => window.open('tel:8126694165', '_self')}
                 >
                   <Phone className="h-4 w-4 mr-2" />
-                  Call (501) 575-5189
+                  Call (812) 669-4165
                 </Button>
               </div>
             </Card>
