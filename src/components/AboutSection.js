@@ -10,30 +10,34 @@ import {
   Star,
   CheckCircle,
   Heart,
-  Truck
+  Truck,
+  Target,
+  Eye,
+  Zap,
+  MapPin
 } from 'lucide-react';
 
 export const AboutSection = () => {
-  const values = [
+  const missionValues = [
     {
-      icon: Shield,
-      title: "Trust & Safety",
-      description: "Fully licensed, insured, and background-checked team members for your peace of mind."
+      icon: Zap,
+      title: "Swiftness & Efficiency",
+      description: "Respecting your time with precise scheduling and execution."
     },
     {
       icon: Heart,
-      title: "Customer Care",
-      description: "We treat your belongings as our own and provide personalized service for every client."
+      title: "Care & Integrity",
+      description: "Handling your belongings and spaces as if they were our own."
     },
     {
       icon: Award,
-      title: "Quality Guarantee",
-      description: "100% satisfaction guarantee on all our moving and cleaning services."
+      title: "Thoroughness & Quality",
+      description: "Using proven techniques and attention to detail in every task."
     },
     {
-      icon: Clock,
-      title: "Reliable Service",
-      description: "On-time service with transparent pricing and no hidden fees."
+      icon: MapPin,
+      title: "Local Commitment",
+      description: "Strengthening Indiana by serving our neighbors with reliability and pride."
     }
   ];
 
@@ -54,12 +58,75 @@ export const AboutSection = () => {
             <span className="text-blue-600 font-medium">About Us</span>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Your Trusted Moving & Cleaning Partner
+            Your Trusted Moving & Cleaning Partner in Indiana
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            With years of experience in both residential and commercial services, 
-            we've built our reputation on reliability, professionalism, and exceptional customer care.
+            Swift Move and Clean delivers exceptional residential and commercial moving and cleaning services 
+            with a commitment to quality, care, and community.
           </p>
+        </div>
+
+        {/* Vision & Mission Cards */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {/* Vision Card */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-sky-50 to-blue-100">
+            <CardContent className="p-8">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-sky-blue p-3 rounded-lg">
+                  <Eye className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Our Vision for Indiana</h3>
+              </div>
+              <p className="text-gray-700 leading-relaxed">
+                We envision communities where every move is a smooth journey and every home or office is a clean, 
+                vibrant space for growth and well-being. We strive to be the catalyst for seamless transitions 
+                and pristine environments.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Mission Card */}
+          <Card className="border-0 shadow-lg bg-gradient-to-br from-orange-50 to-yellow-100">
+            <CardContent className="p-8">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="bg-bright-orange p-3 rounded-lg">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900">Our Mission in Action</h3>
+              </div>
+              <p className="text-gray-700 leading-relaxed">
+                To provide swift, thorough, and stress-free moving and cleaning services that empower our 
+                residential and commercial clients to enjoy a fresh start and a healthier environment.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Mission Values Grid */}
+        <div className="mb-16">
+          <h3 className="text-2xl font-bold text-gray-900 text-center mb-8">
+            How We Deliver Excellence
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {missionValues.map((value, index) => {
+              const IconComponent = value.icon;
+              return (
+                <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
+                  <CardContent className="p-6 text-center">
+                    <div className="bg-gradient-to-br from-blue-50 to-orange-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                      <IconComponent className="h-6 w-6 text-sky-blue" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                      {value.title}
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {value.description}
+                    </p>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-16">
@@ -110,32 +177,34 @@ export const AboutSection = () => {
                   <p className="text-gray-600 text-sm">Emergency moves and cleaning when you need it most</p>
                 </div>
               </div>
-              <Button className="w-full bg-orange-500 hover:bg-orange-600 text-white">
-                Call for Emergency Service
+              <Button 
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white"
+                onClick={() => window.location.href = 'tel:8126694165'}
+              >
+                Call (812) 669-4165 for Emergency Service
               </Button>
             </div>
           </div>
 
-          {/* Right Content - Values Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {values.map((value, index) => {
-              const IconComponent = value.icon;
-              return (
-                <Card key={index} className="group hover:shadow-lg transition-all duration-300 border-0 shadow-md">
-                  <CardContent className="p-6 text-center">
-                    <div className="bg-gradient-to-br from-blue-50 to-orange-50 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                      <IconComponent className="h-6 w-6 text-blue-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                      {value.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {value.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              );
-            })}
+          {/* Right Content - Indiana Focus */}
+          <div className="bg-white rounded-2xl p-8 shadow-lg">
+            <div className="text-center mb-6">
+              <div className="bg-navy-blue p-4 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                <MapPin className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">Proudly Serving Indiana</h3>
+              <p className="text-gray-600">
+                We're committed to strengthening our Indiana communities by providing reliable, 
+                professional moving and cleaning services to our neighbors.
+              </p>
+            </div>
+            <div className="bg-gradient-to-r from-sky-50 to-orange-50 rounded-xl p-6">
+              <p className="text-center text-gray-700 italic">
+                "To be Indiana's most trusted partner for making spaces new, whether you're settling 
+                into one or refreshing the one you're in."
+              </p>
+              <p className="text-center text-sky-blue font-semibold mt-2">— Our Vision</p>
+            </div>
           </div>
         </div>
 
@@ -143,7 +212,7 @@ export const AboutSection = () => {
         <div className="bg-white rounded-2xl p-8 lg:p-12 shadow-lg">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Our Success in Numbers</h3>
-            <p className="text-gray-600">Trusted by hundreds of families and businesses across the city</p>
+            <p className="text-gray-600">Trusted by hundreds of families and businesses across Indiana</p>
           </div>
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
