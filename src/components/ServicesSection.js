@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -8,7 +9,9 @@ import {
   Truck, 
   Sparkles, 
   Clock,
-  CheckCircle 
+  CheckCircle,
+  Package,
+  ArrowRight
 } from 'lucide-react';
 
 export const ServicesSection = () => {
@@ -22,35 +25,63 @@ export const ServicesSection = () => {
   const services = [
     {
       icon: Home,
-      title: "Residential Moving",
-      description: "Complete home moving services with professional packing and careful handling of your belongings.",
-      features: ["Packing & Unpacking", "Furniture Assembly", "Fragile Item Protection", "Storage Solutions"],
-      badge: "Most Popular",
-      badgeColor: "bg-blue-100 text-blue-800"
+      title: "Local Moving",
+      description: "Full-service local moving within Indiana. Quick, efficient, and stress-free relocations in your area.",
+      features: ["Same-Day Service", "Apartment & Condo", "Single-Family Home", "Senior Moves"],
+      badge: "Popular",
+      badgeColor: "bg-blue-100 text-blue-800",
+      link: "#booking",
+      isMoving: true
+    },
+    {
+      icon: Truck,
+      title: "Long Distance Moving",
+      description: "Professional long distance moving services across state lines with care and precision.",
+      features: ["Interstate Moving", "Cross-Country", "Full Packing Service", "GPS Tracking"],
+      badge: "Interstate",
+      badgeColor: "bg-green-100 text-green-800",
+      link: "#booking",
+      isMoving: true
+    },
+    {
+      icon: Clock,
+      title: "Last Minute Moving",
+      description: "Emergency and same-day moving services when you need to relocate quickly.",
+      features: ["Same-Day Service", "Emergency Moves", "Flexible Scheduling", "Quick Response"],
+      badge: "Urgent",
+      badgeColor: "bg-red-100 text-red-800",
+      link: "#booking",
+      isMoving: true
     },
     {
       icon: Building,
       title: "Commercial Moving",
-      description: "Office relocations with minimal downtime. We handle IT equipment, furniture, and sensitive documents.",
-      features: ["Office Equipment", "IT Setup", "Document Handling", "Weekend Service"],
+      description: "Office relocations with minimal downtime. We handle IT equipment, furniture, and phased moves.",
+      features: ["Office Relocations", "Business Moving", "Weekend Moves", "Equipment Assembly"],
       badge: "Business",
-      badgeColor: "bg-green-100 text-green-800"
+      badgeColor: "bg-purple-100 text-purple-800",
+      link: "#booking",
+      isMoving: true
     },
     {
       icon: Sparkles,
       title: "House Cleaning",
-      description: "Deep cleaning services for your old and new home. Move-in ready or move-out cleaning.",
-      features: ["Deep Cleaning", "Carpet Cleaning", "Window Cleaning", "Post-Construction"],
-      badge: "Add-on",
-      badgeColor: "bg-orange-100 text-orange-800"
+      description: "Recurring, deep cleaning, move-in/out, and post-construction cleaning for your home.",
+      features: ["Recurring Cleaning", "Deep Cleaning", "Move-In/Out", "Post-Construction"],
+      badge: "Cleaning",
+      badgeColor: "bg-orange-100 text-orange-800",
+      link: "/services/residential-cleaning",
+      isMoving: false
     },
     {
       icon: Building,
       title: "Office Cleaning",
-      description: "Professional office cleaning services to maintain a healthy work environment.",
-      features: ["Daily Cleaning", "Sanitization", "Floor Care", "Restroom Maintenance"],
+      description: "Professional office, retail, medical facility cleaning, carpet and window services.",
+      features: ["Daily/Weekly Office", "Retail Store", "Medical Office", "Carpet & Windows"],
       badge: "Commercial",
-      badgeColor: "bg-purple-100 text-purple-800"
+      badgeColor: "bg-teal-100 text-teal-800",
+      link: "/services/commercial-cleaning",
+      isMoving: false
     }
   ];
 
@@ -73,7 +104,7 @@ export const ServicesSection = () => {
         </div>
 
         {/* Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             
@@ -81,6 +112,7 @@ export const ServicesSection = () => {
             const serviceImages = [
               "https://images.unsplash.com/photo-1606492775219-7babadc15e83", // Residential Moving
               "https://images.pexels.com/photos/7464244/pexels-photo-7464244.jpeg", // Commercial Moving
+              "https://images.unsplash.com/photo-1600518464441-9154a4dea21b", // Moving Support
               "https://images.pexels.com/photos/6195125/pexels-photo-6195125.jpeg", // House Cleaning
               "https://images.unsplash.com/photo-1686178827149-6d55c72d81df" // Office Cleaning
             ];
@@ -101,7 +133,7 @@ export const ServicesSection = () => {
                   </div>
                 </div>
                 
-                <CardContent className="p-8">
+                <CardContent className="p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div className="bg-gradient-to-br from-sky-100 to-green-100 p-3 rounded-lg">
                       <IconComponent className="h-6 w-6 text-sky-blue" />
@@ -112,11 +144,11 @@ export const ServicesSection = () => {
                     {service.title}
                   </h3>
                   
-                  <p className="text-gray-600 mb-6 leading-relaxed">
+                  <p className="text-gray-600 mb-4 leading-relaxed text-sm">
                     {service.description}
                   </p>
                   
-                  <div className="space-y-3 mb-6">
+                  <div className="space-y-2 mb-6">
                     {service.features.map((feature, idx) => (
                       <div key={idx} className="flex items-center space-x-2">
                         <CheckCircle className="h-4 w-4 text-green-500" />
@@ -125,13 +157,34 @@ export const ServicesSection = () => {
                     ))}
                   </div>
                   
-                  <Button 
-                    variant="outline" 
-                    className="w-full border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-white transition-all duration-300"
-                    onClick={() => scrollToSection('booking')}
-                  >
-                    Get Quote
-                  </Button>
+                  <div className="flex gap-2">
+                    {service.isMoving ? (
+                      <Button 
+                        variant="outline" 
+                        className="flex-1 border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-white transition-all duration-300"
+                        onClick={() => scrollToSection('booking')}
+                      >
+                        Book Now
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    ) : (
+                      <Link to={service.link} className="flex-1">
+                        <Button 
+                          variant="outline" 
+                          className="w-full border-sky-blue text-sky-blue hover:bg-sky-blue hover:text-white transition-all duration-300"
+                        >
+                          Learn More
+                          <ArrowRight className="h-4 w-4 ml-2" />
+                        </Button>
+                      </Link>
+                    )}
+                    <Button 
+                      className="bg-bright-orange text-white hover:opacity-90"
+                      onClick={() => scrollToSection('booking')}
+                    >
+                      Quote
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             );
@@ -189,9 +242,10 @@ export const ServicesSection = () => {
                   <Button 
                     variant="outline" 
                     className="w-full border-orange-500 text-orange-500 hover:bg-orange-50"
+                    onClick={() => window.location.href = 'tel:8126694165'}
                   >
                     <Clock className="h-4 w-4 mr-2" />
-                    Call (501) 575-5189
+                    Call (812) 669-4165
                   </Button>
                 </div>
               </div>
@@ -203,21 +257,33 @@ export const ServicesSection = () => {
         <div className="bg-gradient-to-r from-sky-100 to-yellow-100 rounded-2xl p-8 lg:p-12">
           <div className="text-center mb-8">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Service Areas</h3>
-            <p className="text-gray-600">We proudly serve the following areas with our moving and cleaning services</p>
+            <p className="text-gray-600">We proudly serve Indiana with our moving and cleaning services</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 text-center">
             {[
-              "Ohio", "Kentucky", "Indiana"
+              "Bloomington, IN",
+              "Indianapolis, IN",
+              "Columbus, IN",
+              "Lafayette, IN",
+              "Carmel, IN",
+              "Greenwood, IN",
+              "Avon, IN",
+              "Seymour, IN",
+              "Greensburg, IN",
+              "Fishers, IN",
+              "Zionsville, IN",
+              "Muncie, IN",
+              "Danville, IN"
             ].map((area, index) => (
               <div key={index} className="bg-white rounded-lg p-4 shadow-sm">
-                <span className="font-medium text-gray-900">{area}</span>
+                <span className="font-medium text-gray-900 text-sm">{area}</span>
               </div>
             ))}
           </div>
           
           <div className="text-center mt-8">
-            <p className="text-gray-600 mb-4">Serving the entire tri-state area with professional moving and cleaning services!</p>
+            <p className="text-gray-600 mb-4">Proudly serving Indiana communities with reliable, professional service!</p>
             <Button className="bg-bright-orange text-white hover:opacity-90">
               Get Service Quote
             </Button>
