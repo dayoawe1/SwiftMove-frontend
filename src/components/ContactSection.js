@@ -70,22 +70,22 @@ export const ContactSection = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: "(501) 575-5189",
+      details: "(812) 669-4165",
       subtitle: "24/7 Emergency Service",
       color: "blue"
     },
     {
       icon: Mail,
       title: "Email Us",
-      details: "info@swiftmoveclean.com",
+      details: "info@swiftcleanandmove.com",
       subtitle: "Response within 2 hours",
       color: "orange"
     },
     {
       icon: MapPin,
-      title: "Visit Us",
-      details: "123 Service Street",
-      subtitle: "City, State 12345",
+      title: "Service Area",
+      details: "Indiana",
+      subtitle: "Bloomington, Indianapolis, Columbus & more",
       color: "green"
     },
     {
@@ -141,7 +141,7 @@ export const ContactSection = () => {
                       type="tel"
                       value={contactForm.phone}
                       onChange={(e) => handleInputChange('phone', e.target.value)}
-                      placeholder="(501) 575-5189"
+                      placeholder="(812) 669-4165"
                       className="mt-2"
                     />
                   </div>
@@ -250,9 +250,12 @@ export const ContactSection = () => {
                   <p className="text-gray-600 mb-4">
                     Need immediate assistance? We're available 24/7 for emergency moves.
                   </p>
-                  <Button className="w-full bg-red-600 hover:bg-red-700 text-white">
+                  <Button 
+                    className="w-full bg-red-600 hover:bg-red-700 text-white"
+                    onClick={() => window.location.href = 'tel:8126694165'}
+                  >
                     <Phone className="h-4 w-4 mr-2" />
-                    Call Emergency Line
+                    Call (812) 669-4165
                   </Button>
                 </div>
               </CardContent>
@@ -302,10 +305,15 @@ export const ContactSection = () => {
             <div className="bg-gradient-to-r from-blue-100 to-orange-100 h-64 flex items-center justify-center">
               <div className="text-center">
                 <MapPin className="h-12 w-12 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">Find Us Here</h3>
-                <p className="text-gray-600">123 Service Street, City, State 12345</p>
-                <Button variant="outline" className="mt-4 border-blue-600 text-blue-600 hover:bg-blue-50">
-                  Get Directions
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">Proudly Serving Indiana</h3>
+                <p className="text-gray-600">Bloomington, Indianapolis, Columbus, Lafayette, Carmel, Greenwood, Avon, Seymour, Greensburg, Fishers, Zionsville, Muncie, Danville, etc.</p>
+                <Button 
+                  variant="outline" 
+                  className="mt-4 border-blue-600 text-blue-600 hover:bg-blue-50"
+                  onClick={() => window.location.href = 'tel:8126694165'}
+                >
+                  <Phone className="h-4 w-4 mr-2" />
+                  Call (812) 669-4165
                 </Button>
               </div>
             </div>
