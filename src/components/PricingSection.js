@@ -75,12 +75,14 @@ export const PricingSection = () => {
                         ? 'bg-blue-600 hover:bg-blue-700 text-white' 
                         : 'bg-white border-2 border-gray-200 text-gray-900 hover:border-blue-600 hover:text-blue-600'
                     }`}
+                    onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
                   >
                     Get Free Quote
                   </Button>
                   <Button 
                     variant="outline" 
                     className="w-full border-orange-500 text-orange-500 hover:bg-orange-50"
+                    onClick={() => window.location.href = 'tel:8126694165'}
                   >
                     <Phone className="h-4 w-4 mr-2" />
                     Call Now
@@ -129,7 +131,10 @@ export const PricingSection = () => {
               </div>
               
               <div className="space-y-4">
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg">
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 text-lg"
+                  onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth' })}
+                >
                   Request Free Estimate
                 </Button>
                 <div className="text-center">
@@ -137,9 +142,10 @@ export const PricingSection = () => {
                   <Button 
                     variant="outline" 
                     className="border-orange-500 text-orange-500 hover:bg-orange-50"
+                    onClick={() => window.location.href = 'tel:8126694165'}
                   >
                     <Phone className="h-4 w-4 mr-2" />
-                    (501) 575-5189
+                    (812) 669-4165
                   </Button>
                 </div>
               </div>
